@@ -85,6 +85,9 @@ dependencies {
     // Gson
     implementation(libs.gson)
 
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+
     // Test
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)

@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NetworkConnectionUtil @Inject constructor(
+class NetworkConnectionHelper @Inject constructor(
     private val logger: Logger
 ) {
     var hasNetworkConnection = false
