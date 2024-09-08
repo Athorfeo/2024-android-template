@@ -23,12 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import io.github.athorfeo.template.R
 import io.github.athorfeo.template.model.Item
 import io.github.athorfeo.template.model.SalePriceItem
 import io.github.athorfeo.template.model.state.ItemState
@@ -98,13 +100,13 @@ fun ContentDetailItemScreen(
             modifier = Modifier.fillMaxWidth()
         )
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-            Text("Name", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.title_item), style = MaterialTheme.typography.bodySmall)
             Text(item.title)
 
-            Text("Price", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp))
+            Text(stringResource(R.string.price_item), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp))
             Row {
                 Text(
-                    text = "$ ${item.price}",
+                    text = "${stringResource(R.string.money_symbol)} ${item.price}",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -116,7 +118,7 @@ fun ContentDetailItemScreen(
                 )
             }
 
-            Text("Available", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp))
+            Text(stringResource(R.string.quantity_available_item), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp))
             Text(
                 text = "${item.availableQuantity}",
                 style = MaterialTheme.typography.bodyLarge,
@@ -127,7 +129,7 @@ fun ContentDetailItemScreen(
                 modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp).fillMaxWidth(),
                 onClick = onOpenUrlInBrowser
             ) {
-                Text("Open in browser")
+                Text(stringResource(R.string.open_browser_item))
             }
         }
 

@@ -32,6 +32,7 @@ import io.github.athorfeo.template.model.Item
 import io.github.athorfeo.template.model.SalePriceItem
 import io.github.athorfeo.template.model.state.SearchItemsState
 import io.github.athorfeo.template.navigation.Screen
+import io.github.athorfeo.template.ui.component.Loading
 import io.github.athorfeo.template.ui.theme.ApplicationTheme
 
 @Composable
@@ -59,7 +60,7 @@ fun ResultSearchScreen(
     LazyColumn {
         if (uiState.isLoading) {
             item {
-                Text("Loading data...")
+                Loading()
             }
         } else {
             item {
