@@ -31,7 +31,7 @@ class SearchItemsRepository @Inject constructor(
         }
     }
 
-    suspend fun getItemInCache(itemId: String): Flow<Result<ItemSearchItems>> {
+    fun getItemInCache(itemId: String): Flow<Result<ItemSearchItems>> {
         logger.d("itemId: $itemId")
         return localItemsSearchesDataSource
             .getSearchedItems()
