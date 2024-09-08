@@ -12,4 +12,12 @@
     <string name="quantity_available_item">Available</string>
     <string name="open_browser_item">Open in browser</string>
     <string name="loading">Loading, please wait a moment…</string>
+    <string name="no_items_found">There are no items to show.</string>
+
+    <string name="title_default_error_dialog">An error has occurred</string>
+    <string name="text_default_error_dialog">An error has occurred, please try again</string>
+    <string name="dismiss">Dismiss</string>
+
+    <string name="title_not_found_item_search_dialog">No items found</string>
+    <string name="text_not_found_item_search_dialog">No items found, please try again.</string>
 </resources>

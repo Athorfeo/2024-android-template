@@ -21,7 +21,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import io.github.athorfeo.template.R
+import io.github.athorfeo.template.model.state.QuerySearchState
 import io.github.athorfeo.template.navigation.Screen
+import io.github.athorfeo.template.ui.component.ErrorAlertDialog
+import io.github.athorfeo.template.ui.component.Loading
 import io.github.athorfeo.template.ui.component.SearchTextField
 import io.github.athorfeo.template.ui.theme.ApplicationTheme
 
@@ -30,48 +33,60 @@ fun QuerySearchRoute(
     navController: NavController,
     viewModel: QuerySearchViewModel = hiltViewModel()
 ) {
-    val query by viewModel.query.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     QuerySearchScreen(
-        query,
+        uiState,
+        viewModel::onDismissError,
         viewModel::onQueryChange
     ) {
-        val route = Screen.ResultSearch.buildNavigate(query)
-        navController.navigate(route)
+        viewModel.onSearch { query ->
+            val route = Screen.ResultSearch.buildNavigate(query)
+            navController.navigate(route)
+        }
     }
 }
 
 @Composable
 fun QuerySearchScreen(
-    query: String,
+    uiState: QuerySearchState,
+    onDismissErrorDialog: () -> Unit,
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.primaryContainer)
-    ) {
-        Box {
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.White, shape = RoundedCornerShape(0.dp, 0.dp, 24.dp, 24.dp))
-                .padding(16.dp, 32.dp, 16.dp, 32.dp)) {
-                SearchTextField(query, onQueryChange, onSearch)
-                Text(
-                    modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 8.dp),
-                    text = stringResource(R.string.search_input_label),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
+    if (uiState.isLoading) {
+        Loading()
+    } else {
+        if(uiState.exception != null) {
+            ErrorAlertDialog(onDismissErrorDialog, onDismissErrorDialog, uiState.exception.title, uiState.exception.description)
         }
 
-        Box(
-            modifier = Modifier.fillMaxWidth().padding(0.dp, 16.dp, 0.dp, 0.dp)
+        Column(
+            modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.primaryContainer)
         ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.search_input_label),
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center
-            )
+            Box {
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Color.White, shape = RoundedCornerShape(0.dp, 0.dp, 24.dp, 24.dp))
+                    .padding(16.dp, 32.dp, 16.dp, 32.dp)) {
+                    SearchTextField(uiState.query, onQueryChange, onSearch)
+                    Text(
+                        modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 8.dp),
+                        text = stringResource(R.string.search_input_label),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(0.dp, 16.dp, 0.dp, 0.dp)
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.athorfeo),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
@@ -80,6 +95,6 @@ fun QuerySearchScreen(
 @Composable
 fun SearchScreenPreview() {
     ApplicationTheme {
-        QuerySearchScreen("Query", {}, {})
+        QuerySearchScreen(QuerySearchState(), {}, {}, {})
     }
 }

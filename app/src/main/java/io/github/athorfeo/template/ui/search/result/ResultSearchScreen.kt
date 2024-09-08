@@ -30,9 +30,7 @@ import coil.compose.AsyncImage
 import io.github.athorfeo.template.R
 import io.github.athorfeo.template.model.Item
 import io.github.athorfeo.template.model.SalePriceItem
-import io.github.athorfeo.template.model.state.SearchItemsState
 import io.github.athorfeo.template.navigation.Screen
-import io.github.athorfeo.template.ui.component.Loading
 import io.github.athorfeo.template.ui.theme.ApplicationTheme
 
 @Composable
@@ -40,11 +38,11 @@ fun ResultSearchRoute(
     navController: NavController,
     viewModel: ResultSearchViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val items by viewModel.items.collectAsStateWithLifecycle()
 
     ResultSearchScreen(
         viewModel.query,
-        uiState
+        items
     ) { itemId ->
         val route = Screen.DetailItem.buildNavigate(itemId)
         navController.navigate(route)
@@ -54,21 +52,21 @@ fun ResultSearchRoute(
 @Composable
 fun ResultSearchScreen(
     query: String,
-    uiState: SearchItemsState,
+    itemsSearched: List<Item>,
     onGoDetail: (String) -> Unit
 ) {
     LazyColumn {
-        if (uiState.isLoading) {
+        if(itemsSearched.isEmpty()) {
             item {
-                Loading()
+                CaptionResultSearchScreen(stringResource(R.string.no_items_found))
             }
         } else {
             item {
-                CaptionResultSearchScreen(query)
+                CaptionResultSearchScreen("${stringResource(R.string.result_search)} $query")
             }
 
-            items(uiState.results.size) { index ->
-                val itemRow = uiState.results[index]
+            items(itemsSearched.size) { index ->
+                val itemRow = itemsSearched[index]
                 ItemResultSearchScreen(itemRow, onGoDetail)
             }
         }
@@ -76,7 +74,7 @@ fun ResultSearchScreen(
 }
 
 @Composable
-fun CaptionResultSearchScreen(query: String) {
+fun CaptionResultSearchScreen(text: String) {
     Column(
         modifier = Modifier
             .padding(16.dp, 0.dp, 16.dp, 0.dp)
@@ -86,7 +84,7 @@ fun CaptionResultSearchScreen(query: String) {
             .padding(16.dp)
     ) {
         Text(
-            text = "${stringResource(R.string.result_search)} $query",
+            text = text,
             style = MaterialTheme.typography.bodySmall
         )
     }
@@ -177,7 +175,15 @@ fun ResultSearchScreenPreview() {
             1,
         )
         val results = listOf(item)
-        val state = SearchItemsState(results = results)
-        ResultSearchScreen("Query", state, {})
+        ResultSearchScreen("Query", results, {})
+    }
+}
+
+@Preview
+@Composable
+fun NoItemsResultSearchScreenPreview() {
+    ApplicationTheme {
+        val results = listOf<Item>()
+        ResultSearchScreen("Query", results, {})
     }
 }

@@ -5,6 +5,7 @@ import io.github.athorfeo.template.data.datasource.LocalItemsSearchesDataSource
 import io.github.athorfeo.template.data.datasource.NetworkItemsSearchesDataSource
 import io.github.athorfeo.template.model.Result
 import io.github.athorfeo.template.network.response.ItemSearchItems
+import io.github.athorfeo.template.network.response.toDomainModel
 import io.github.athorfeo.template.util.AppException
 import io.github.athorfeo.template.util.Logger
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +29,14 @@ class SearchItemsRepository @Inject constructor(
             emit(Result.Success(response.results))
         }.catch {
             emit(Result.Error(it))
+        }
+    }
+
+    fun getLastSearch(): Flow<List<ItemSearchItems>> {
+        return localItemsSearchesDataSource.getSearchedItems().map {
+            it ?: listOf()
+        }.catch {
+            emit(listOf())
         }
     }
 
