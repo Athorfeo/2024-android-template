@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Athorfeo"
         tools:targetApi="31"
-        android:name=".TemplateApp">
+        android:name=".TemplateApp"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">2024 Athorfeo</string>
     <string name="title_result_search_screen">Search Results</string>
+    <string name="title_detail_item_screen">Item detail</string>
+    <string name="result_search">Search results for: </string>
+    <string name="item_available">available</string>
 </resources>

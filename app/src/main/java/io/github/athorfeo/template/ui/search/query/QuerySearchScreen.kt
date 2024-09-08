@@ -56,7 +56,6 @@ fun QuerySearchScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 SearchTextField(query, onQueryChange, onSearch)
-
                 Text(
                     modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 8.dp),
                     text = "Write what you want to search",

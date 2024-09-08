@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class QuerySearchViewModel @Inject constructor(): ViewModel() {
-    private val _query = MutableStateFlow("")
+    private val _query = MutableStateFlow("Motorola")
     val query: StateFlow<String> = _query
 
     fun onQueryChange(text: String) {

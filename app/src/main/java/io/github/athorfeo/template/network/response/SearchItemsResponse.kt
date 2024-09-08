@@ -1,6 +1,8 @@
 package io.github.athorfeo.template.network.response
 
 import com.google.gson.annotations.SerializedName
+import io.github.athorfeo.template.model.Item
+import io.github.athorfeo.template.model.SalePriceItem
 
 data class SearchItemsResponse(
     @SerializedName("paging")
@@ -39,9 +41,17 @@ data class ItemSearchItems(
     val availableQuantity: Int
 )
 
+fun ItemSearchItems.toDomainModel(): Item {
+    return Item(id, title, permalink, thumbnail, currencyId, price, salePrice.toDomainModel(), availableQuantity)
+}
+
 data class SalePriceResultSearchItems(
     @SerializedName("currency_id")
     val currencyId: String,
     @SerializedName("amount")
     val amount: Double
 )
+
+fun SalePriceResultSearchItems.toDomainModel(): SalePriceItem {
+    return SalePriceItem(currencyId, amount)
+}

@@ -1,9 +1,10 @@
 package io.github.athorfeo.template.model.state
 
+import io.github.athorfeo.template.model.Item
 import io.github.athorfeo.template.util.AppException
 
-data class DetailSearchState(
+data class SearchItemsState(
     val isLoading: Boolean = false,
     val exception: AppException? = null,
-    val resultsQuery: List<String> = listOf()
+    val results: List<Item> = listOf()
 )

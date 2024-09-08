@@ -20,7 +20,7 @@ sealed class Screen(val route: String, @StringRes val title: Int? = null) {
             return "$route/$query"
         }
     }
-    data object DetailItem: Screen("item") {
+    data object DetailItem: Screen("item", R.string.title_detail_item_screen) {
         override fun buildRoute(): String {
             return "$route/{$ITEM_ID_ARG}"
         }
