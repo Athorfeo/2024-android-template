@@ -27,8 +27,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            isDebuggable = true
+            buildConfigField("String", "BASE_URL", "${project.properties["debug_base_url"]}")
+        }
         release {
-            isMinifyEnabled = false
+            isDebuggable = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -44,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.10"
