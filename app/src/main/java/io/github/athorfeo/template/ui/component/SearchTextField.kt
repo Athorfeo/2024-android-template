@@ -17,7 +17,10 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import io.github.athorfeo.template.ui.SEARCH_BUTTON_UI_TAG
+import io.github.athorfeo.template.ui.SEARCH_INPUT_UI_TAG
 
 @Composable
 fun SearchTextField(
@@ -29,7 +32,7 @@ fun SearchTextField(
         modifier = Modifier.fillMaxWidth().border(width = 1.dp, color = Color.Gray, shape = RoundedCornerShape(8.dp)),
     ) {
         OutlinedTextField(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.testTag(SEARCH_INPUT_UI_TAG).weight(1f),
             value = query,
             onValueChange = onQueryChange,
             singleLine = true,
@@ -40,7 +43,7 @@ fun SearchTextField(
             )
         )
         FilledTonalButton(
-            modifier = Modifier.height(55.dp).padding(0.dp, 0.dp, 0.dp, 0.dp),
+            modifier = Modifier.testTag(SEARCH_BUTTON_UI_TAG).height(55.dp).padding(0.dp, 0.dp, 0.dp, 0.dp),
             onClick = onSearch,
             enabled = query.isNotEmpty(),
             shape = RoundedCornerShape(0.dp, 8.dp, 8.dp, 0.dp),

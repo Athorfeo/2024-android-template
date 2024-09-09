@@ -33,6 +33,7 @@ import io.github.athorfeo.template.model.SalePriceItem
 import io.github.athorfeo.template.navigation.Screen
 import io.github.athorfeo.template.ui.theme.ApplicationTheme
 
+
 @Composable
 fun ResultSearchRoute(
     navController: NavController,
@@ -137,11 +138,13 @@ fun ImageItemResultSearchScreen(
     }
 }
 
+private const val WEIGHT_CONTENT_ITEM = 0.6f
+
 @Composable
 fun RowScope.ContentItemResultSearchScreen(
     item: Item
 ) {
-    Column(modifier = Modifier.weight(0.6f)) {
+    Column(modifier = Modifier.weight(WEIGHT_CONTENT_ITEM)) {
         Text(
             modifier = Modifier.padding(4.dp, 0.dp, 0.dp, 0.dp),
             text = item.title,
