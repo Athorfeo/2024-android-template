@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.kapt)
+    alias(libs.plugins.jetbrains.kotlin.kover)
     alias(libs.plugins.detekt)
     alias(libs.plugins.google.dagger.hilt.android)
 }
@@ -121,5 +122,44 @@ tasks.withType<Detekt>().configureEach {
         txt.required.set(false)
         sarif.required.set(false)
         md.required.set(false)
+    }
+}
+
+val koverFilesExcludes = listOf(
+    "*Activity*",
+    "*Activity_*",
+    "*Activity\$*",
+    "*BuilConfig*",
+    "*_di_*",
+    "*.di.*Module*",
+    "*_navigation_*",
+    "*Module_*",
+    "*module_*",
+    "*Hilt_*",
+    "*_Hilt*",
+    "*_Factory*",
+    "*DaggerInjectableComponent*",
+    "*ComposableSingletons*",
+    "*TemplateApp*",
+    "*TemplateApp_*",
+    "*_TemplateApp*",
+)
+kover {
+    reports{
+        filters{
+            excludes {
+                androidGeneratedClasses()
+                classes(koverFilesExcludes)
+                annotatedBy("androidx.compose.runtime.Composable")
+            }
+        }
+
+        verify {
+            rule {
+                bound {
+                    minValue = 80
+                }
+            }
+        }
     }
 }

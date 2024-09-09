@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.jetbrains.kotlin.kapt) apply false
+    alias(libs.plugins.jetbrains.kotlin.kover) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.google.dagger.hilt.android) apply false
 }

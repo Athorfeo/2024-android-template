@@ -4,13 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.github.athorfeo.template.data.repository.SearchItemsRepository
-import io.github.athorfeo.template.model.Result
-import io.github.athorfeo.template.model.state.SearchItemsState
-import io.github.athorfeo.template.network.response.toDomainModel
-import io.github.athorfeo.template.util.AppException
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class OpenUrlBrowserUseCase @Inject constructor(

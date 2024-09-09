@@ -103,7 +103,11 @@ fun ContentDetailItemScreen(
             Text(stringResource(R.string.title_item), style = MaterialTheme.typography.bodySmall)
             Text(item.title)
 
-            Text(stringResource(R.string.price_item), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp))
+            Text(
+                stringResource(R.string.price_item),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp)
+            )
             Row {
                 Text(
                     text = "${stringResource(R.string.money_symbol)} ${item.price}",
@@ -118,7 +122,11 @@ fun ContentDetailItemScreen(
                 )
             }
 
-            Text(stringResource(R.string.quantity_available_item), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp))
+            Text(
+                stringResource(R.string.quantity_available_item),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp)
+            )
             Text(
                 text = "${item.availableQuantity}",
                 style = MaterialTheme.typography.bodyLarge,

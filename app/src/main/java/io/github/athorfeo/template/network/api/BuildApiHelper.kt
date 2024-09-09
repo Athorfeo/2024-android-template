@@ -5,11 +5,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+const val BASE_URL = "https://api.mercadolibre.com/"
+
 inline fun <reified T : Any> buildApi(): T {
     val retrofit = Retrofit.Builder()
         .client(buildHttpClient())
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl("https://api.mercadolibre.com/")
+        .baseUrl(BASE_URL)
         .build()
 
     return retrofit.create(T::class.java)

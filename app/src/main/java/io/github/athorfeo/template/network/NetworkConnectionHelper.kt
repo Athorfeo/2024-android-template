@@ -17,7 +17,16 @@ class NetworkConnectionHelper @Inject constructor(
         private set
 
     fun registerNetworkCallback(context: Context) {
-        val networkCallback = object: ConnectivityManager.NetworkCallback() {
+        (context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager)?.let {
+            it.registerNetworkCallback(getNetworkRequest(), getNetworkCallback())
+            logger.d("$TAG: Network callback registered!")
+        } ?: run {
+            logger.e("$TAG: Error registering network callback!")
+        }
+    }
+
+    fun getNetworkCallback(): ConnectivityManager.NetworkCallback {
+        return object: ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 hasNetworkConnection = true
@@ -40,16 +49,9 @@ class NetworkConnectionHelper @Inject constructor(
                 logger.d("$TAG: hasNetworkConnection: $hasNetworkConnection")
             }
         }
-
-        (context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager)?.let {
-            it.registerNetworkCallback(getNetworkRequest(), networkCallback)
-            logger.d("$TAG: Network callback registered!")
-        } ?: run {
-            logger.e("$TAG: Error registering network callback!")
-        }
     }
 
-    private fun getNetworkRequest(): NetworkRequest {
+    fun getNetworkRequest(): NetworkRequest {
         return NetworkRequest.Builder()
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .addTransportType(NetworkCapabilities.TRANSPORT_ETHERNET)

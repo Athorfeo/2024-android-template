@@ -36,6 +36,6 @@ sealed class Screen(val route: String, @StringRes val title: Int? = null) {
     }
 }
 
-val rootScreens = listOf(
+val rootScreens = listOf<Screen>(
     Screen.QuerySearch
 )

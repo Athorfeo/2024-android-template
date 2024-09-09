@@ -26,4 +26,3 @@ class ResultSearchViewModel @Inject constructor(
             initialValue = listOf()
         )
 }
-

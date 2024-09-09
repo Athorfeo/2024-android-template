@@ -57,7 +57,12 @@ fun QuerySearchScreen(
         Loading()
     } else {
         if(uiState.exception != null) {
-            ErrorAlertDialog(onDismissErrorDialog, onDismissErrorDialog, uiState.exception.title, uiState.exception.description)
+            ErrorAlertDialog(
+                onDismissErrorDialog,
+                onDismissErrorDialog,
+                uiState.exception.title,
+                uiState.exception.description
+            )
         }
 
         Column(

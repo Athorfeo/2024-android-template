@@ -8,6 +8,7 @@ import io.github.athorfeo.template.network.response.ItemSearchItems
 import io.github.athorfeo.template.data.datastore.SEARCH_ITEMS_STORE
 import io.github.athorfeo.template.data.datastore.resource.SearchListResource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 

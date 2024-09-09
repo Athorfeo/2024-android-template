@@ -4,7 +4,6 @@ import io.github.athorfeo.template.data.repository.SearchItemsRepository
 import io.github.athorfeo.template.model.Item
 import io.github.athorfeo.template.model.Result
 import io.github.athorfeo.template.model.state.ItemState
-import io.github.athorfeo.template.model.state.SearchItemsState
 import io.github.athorfeo.template.network.response.toDomainModel
 import io.github.athorfeo.template.util.AppException
 import kotlinx.coroutines.flow.Flow

@@ -2,6 +2,7 @@
 agp = "8.6.0"
 kotlin = "1.9.22"
 kotlin-kpt = "1.9.22"
+kotlin-kover = "0.9.0-RC"
 hilt-plugin = "2.48.1"
 detekt = "1.23.4"
 
@@ -30,6 +31,7 @@ composeHilt = "1.2.0"
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin-kpt" }
+jetbrains-kotlin-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kotlin-kover" }
 google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt-plugin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 

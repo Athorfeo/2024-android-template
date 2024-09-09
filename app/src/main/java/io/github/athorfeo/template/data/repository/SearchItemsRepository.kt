@@ -5,7 +5,6 @@ import io.github.athorfeo.template.data.datasource.LocalItemsSearchesDataSource
 import io.github.athorfeo.template.data.datasource.NetworkItemsSearchesDataSource
 import io.github.athorfeo.template.model.Result
 import io.github.athorfeo.template.network.response.ItemSearchItems
-import io.github.athorfeo.template.network.response.toDomainModel
 import io.github.athorfeo.template.util.AppException
 import io.github.athorfeo.template.util.Logger
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +16,6 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class SearchItemsRepository @Inject constructor(
-    private val logger: Logger,
     private val networkItemsSearchesDataSource: NetworkItemsSearchesDataSource,
     private val localItemsSearchesDataSource: LocalItemsSearchesDataSource
 ) {
@@ -33,19 +31,19 @@ class SearchItemsRepository @Inject constructor(
     }
 
     fun getLastSearch(): Flow<List<ItemSearchItems>> {
-        return localItemsSearchesDataSource.getSearchedItems().map {
-            it ?: listOf()
-        }.catch {
-            emit(listOf())
-        }
+        return localItemsSearchesDataSource
+            .getSearchedItems()
+            .map {
+                it ?: listOf()
+            }.catch {
+                emit(listOf())
+            }
     }
 
     fun getItemInCache(itemId: String): Flow<Result<ItemSearchItems>> {
-        logger.d("itemId: $itemId")
         return localItemsSearchesDataSource
             .getSearchedItems()
             .map { items ->
-
                 items?.find{ it.id == itemId }?.let { itemFound ->
                     Result.Success(itemFound)
                 } ?: run {
