@@ -21,7 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import io.github.athorfeo.template.R
-import io.github.athorfeo.template.model.state.QuerySearchState
+import io.github.athorfeo.template.model.state.UiLogicState
 import io.github.athorfeo.template.navigation.Screen
 import io.github.athorfeo.template.ui.component.ErrorAlertDialog
 import io.github.athorfeo.template.ui.component.Loading
@@ -33,9 +33,12 @@ fun QuerySearchRoute(
     navController: NavController,
     viewModel: QuerySearchViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiLogicState by viewModel.uiLogicState.collectAsStateWithLifecycle()
+    val query by viewModel.query.collectAsStateWithLifecycle()
+
     QuerySearchScreen(
-        uiState,
+        uiLogicState,
+        query,
         viewModel::onDismissError,
         viewModel::onQueryChange
     ) {
@@ -48,20 +51,21 @@ fun QuerySearchRoute(
 
 @Composable
 fun QuerySearchScreen(
-    uiState: QuerySearchState,
+    uiLogicState: UiLogicState,
+    query: String,
     onDismissErrorDialog: () -> Unit,
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit
 ) {
-    if (uiState.isLoading) {
+    if (uiLogicState.isLoading) {
         Loading()
     } else {
-        if(uiState.exception != null) {
+        if(uiLogicState.exception != null) {
             ErrorAlertDialog(
                 onDismissErrorDialog,
                 onDismissErrorDialog,
-                uiState.exception.title,
-                uiState.exception.description
+                uiLogicState.exception.title,
+                uiLogicState.exception.description
             )
         }
 
@@ -73,7 +77,7 @@ fun QuerySearchScreen(
                     .fillMaxWidth()
                     .background(color = Color.White, shape = RoundedCornerShape(0.dp, 0.dp, 24.dp, 24.dp))
                     .padding(16.dp, 32.dp, 16.dp, 32.dp)) {
-                    SearchTextField(uiState.query, onQueryChange, onSearch)
+                    SearchTextField(query, onQueryChange, onSearch)
                     Text(
                         modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 8.dp),
                         text = stringResource(R.string.search_input_label),
@@ -100,6 +104,7 @@ fun QuerySearchScreen(
 @Composable
 fun SearchScreenPreview() {
     ApplicationTheme {
-        QuerySearchScreen(QuerySearchState(), {}, {}, {})
+        val uiLogicState = UiLogicState()
+        QuerySearchScreen(uiLogicState, "", {}, {}, {})
     }
 }

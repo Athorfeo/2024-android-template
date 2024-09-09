@@ -9,9 +9,9 @@ class NetworkItemsSearchesDataSource @Inject constructor(
     private val networkExecutor: NetworkExecutor,
     private val api: ItemsSearchesApi
 ) {
-    suspend fun fetchSearchItems(query: String): SearchItemsResponse {
+    suspend fun fetchSearchItems(query: String, offset: Int, limit: Int): SearchItemsResponse {
         return checkNotNull(networkExecutor.fetch {
-            api.fetchSearchItems(query)
+            api.fetchSearchItems(query, offset, limit)
         })
     }
 }

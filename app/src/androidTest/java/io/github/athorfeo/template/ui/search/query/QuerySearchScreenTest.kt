@@ -13,7 +13,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.github.athorfeo.template.model.state.QuerySearchState
+import io.github.athorfeo.template.model.state.UiLogicState
 import io.github.athorfeo.template.ui.BUTTON_DIALOG_UI_TAG
 import io.github.athorfeo.template.ui.SEARCH_BUTTON_UI_TAG
 import io.github.athorfeo.template.ui.SEARCH_INPUT_UI_TAG
@@ -43,9 +43,11 @@ class QuerySearchScreenTest {
 
     @Test
     fun default_state_query_search_screen_test() {
+        val uiLogicState = UiLogicState()
+        val query = ""
         composeTestRule.setContent {
             ApplicationTheme {
-                QuerySearchScreen(QuerySearchState(), {}, {}, {})
+                QuerySearchScreen(uiLogicState, query, {}, {}, {})
             }
         }
         composeTestRule.onNodeWithTag(SEARCH_BUTTON_UI_TAG).assertIsNotEnabled()
@@ -53,17 +55,18 @@ class QuerySearchScreenTest {
 
     @Test
     fun type_and_search_query_search_screen_test() {
-        val state = MutableStateFlow(QuerySearchState())
+        val uiLogicState = UiLogicState()
+        val queryState = MutableStateFlow("")
         val onQueryChange: (String) -> Unit = { query ->
-            state.update { state -> state.copy(query = query) }
+            queryState.update { query }
         }
         val onSearch: () -> Unit = mockk()
         every { onSearch.invoke() } returns Unit
 
         composeTestRule.setContent {
-            val uiState by state.collectAsStateWithLifecycle()
+            val uiState by queryState.collectAsStateWithLifecycle()
             ApplicationTheme {
-                QuerySearchScreen(uiState, {}, onQueryChange, onSearch)
+                QuerySearchScreen(uiLogicState, uiState, {}, onQueryChange, onSearch)
             }
         }
 
@@ -78,13 +81,14 @@ class QuerySearchScreenTest {
     @Test
     fun error_state_query_search_screen_test() {
         val exception = AppException()
-        val state = QuerySearchState(exception = exception)
+        val uiLogicState = UiLogicState(exception = exception)
+        val query = ""
         val onDismissErrorDialog: () -> Unit = mockk()
         every { onDismissErrorDialog.invoke() } returns Unit
 
         composeTestRule.setContent {
             ApplicationTheme {
-                QuerySearchScreen(state, onDismissErrorDialog, {}, {})
+                QuerySearchScreen(uiLogicState, query, onDismissErrorDialog, {}, {})
             }
         }
 

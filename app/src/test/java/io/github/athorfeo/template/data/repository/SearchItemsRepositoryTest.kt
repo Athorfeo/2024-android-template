@@ -2,19 +2,18 @@ package io.github.athorfeo.template.data.repository
 
 import io.github.athorfeo.template.data.datasource.LocalItemsSearchesDataSource
 import io.github.athorfeo.template.data.datasource.NetworkItemsSearchesDataSource
+import io.github.athorfeo.template.data.datastore.resource.SearchedItemsResource
 import io.github.athorfeo.template.model.Result
 import io.github.athorfeo.template.network.response.ItemSearchItems
 import io.github.athorfeo.template.network.response.SalePriceResultSearchItems
 import io.github.athorfeo.template.network.response.SearchItemsResponse
 import io.github.athorfeo.template.util.AppException
-import io.github.athorfeo.template.util.Logger
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.unmockkAll
-import io.mockk.verify
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -23,7 +22,6 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Test
 import org.junit.Before
-import retrofit2.Response
 
 class SearchItemsRepositoryTest {
     private val dispatcher = StandardTestDispatcher()
@@ -56,18 +54,18 @@ class SearchItemsRepositoryTest {
     fun search_items_test() {
         scope.runTest {
             val response = SearchItemsResponse(mockk(), mockk())
-            coEvery { networkItemsSearchesDataSource.fetchSearchItems(any()) } returns response
-            coEvery { localItemsSearchesDataSource.saveSearchedItems(response.results) } returns Unit
+            coEvery { networkItemsSearchesDataSource.fetchSearchItems(any(), any(), any()) } returns response
+            coEvery { localItemsSearchesDataSource.saveSearchedItems(response) } returns Unit
 
-            repository.searchItems("").collect {
+            repository.searchItems("", 0).collect {
                 if(it is Result.Success) {
                     Assert.assertEquals(response.results, it.data)
                 }
             }
 
             coVerify {
-                networkItemsSearchesDataSource.fetchSearchItems(any())
-                localItemsSearchesDataSource.saveSearchedItems(response.results)
+                networkItemsSearchesDataSource.fetchSearchItems(any(), any(), any())
+                localItemsSearchesDataSource.saveSearchedItems(response)
             }
         }
     }
@@ -76,16 +74,16 @@ class SearchItemsRepositoryTest {
     fun error_search_items_test() {
         scope.runTest {
             val exception = AppException()
-            coEvery { networkItemsSearchesDataSource.fetchSearchItems(any()) } throws exception
+            coEvery { networkItemsSearchesDataSource.fetchSearchItems(any(), any(), any()) } throws exception
 
-            repository.searchItems("").collect {
+            repository.searchItems("", 0).collect {
                 if(it is Result.Error) {
                     Assert.assertEquals(exception, it.exception)
                 }
             }
 
             coVerify {
-                networkItemsSearchesDataSource.fetchSearchItems(any())
+                networkItemsSearchesDataSource.fetchSearchItems(any(), any(), any())
             }
         }
     }
@@ -93,11 +91,12 @@ class SearchItemsRepositoryTest {
     @Test
     fun get_last_search_test() {
         scope.runTest {
-            val response = listOf<ItemSearchItems>()
-            coEvery { localItemsSearchesDataSource.getSearchedItems() } returns flow { emit(response) }
+            val items = listOf<ItemSearchItems>()
+            val resource = SearchedItemsResource(0, 0, items)
+            coEvery { localItemsSearchesDataSource.getSearchedItems() } returns flow { emit(resource) }
 
-            repository.getLastSearch().collect {
-                Assert.assertEquals(response, it)
+            repository.getSearchedItems().collect {
+                Assert.assertEquals(resource, it)
             }
 
             coVerify {
@@ -111,8 +110,8 @@ class SearchItemsRepositoryTest {
         scope.runTest {
             coEvery { localItemsSearchesDataSource.getSearchedItems() } returns flow { emit(null) }
 
-            repository.getLastSearch().collect {
-                Assert.assertEquals(0, it.size)
+            repository.getSearchedItems().collect {
+                Assert.assertEquals(0, it.data.size)
             }
 
             coVerify {
@@ -129,8 +128,8 @@ class SearchItemsRepositoryTest {
                 throw Exception()
             }
 
-            repository.getLastSearch().collect {
-                Assert.assertEquals(0, it.size)
+            repository.getSearchedItems().collect {
+                Assert.assertEquals(0, it.data.size)
             }
 
             coVerify {
@@ -152,8 +151,9 @@ class SearchItemsRepositoryTest {
                 SalePriceResultSearchItems("", 0.0)
                 , 0
             )
-            val response = listOf(item)
-            coEvery { localItemsSearchesDataSource.getSearchedItems() } returns flow { emit(response) }
+            val items = listOf(item)
+            val resource = SearchedItemsResource(0, 0, items)
+            coEvery { localItemsSearchesDataSource.getSearchedItems() } returns flow { emit(resource) }
 
             repository.getItemInCache(item.id).collect {
                 if(it is Result.Success) {
@@ -170,8 +170,9 @@ class SearchItemsRepositoryTest {
     @Test
     fun not_found_get_item_in_cache_test() {
         scope.runTest {
-            val response = listOf<ItemSearchItems>()
-            coEvery { localItemsSearchesDataSource.getSearchedItems() } returns flow { emit(response) }
+            val items = listOf<ItemSearchItems>()
+            val resource = SearchedItemsResource(0, 0, items)
+            coEvery { localItemsSearchesDataSource.getSearchedItems() } returns flow { emit(resource) }
 
             repository.getItemInCache("").collect {
                 if(it is Result.Error) {

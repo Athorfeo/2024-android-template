@@ -3,10 +3,10 @@ package io.github.athorfeo.template.data.repository
 import dagger.hilt.android.scopes.ViewModelScoped
 import io.github.athorfeo.template.data.datasource.LocalItemsSearchesDataSource
 import io.github.athorfeo.template.data.datasource.NetworkItemsSearchesDataSource
+import io.github.athorfeo.template.data.datastore.resource.SearchedItemsResource
 import io.github.athorfeo.template.model.Result
 import io.github.athorfeo.template.network.response.ItemSearchItems
 import io.github.athorfeo.template.util.AppException
-import io.github.athorfeo.template.util.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -19,32 +19,35 @@ class SearchItemsRepository @Inject constructor(
     private val networkItemsSearchesDataSource: NetworkItemsSearchesDataSource,
     private val localItemsSearchesDataSource: LocalItemsSearchesDataSource
 ) {
-    fun searchItems(query: String): Flow<Result<List<ItemSearchItems>>> {
+    fun searchItems(query: String, offset: Int): Flow<Result<Int>> {
         return flow {
             emit(Result.Loading)
-            val response = networkItemsSearchesDataSource.fetchSearchItems(query)
-            localItemsSearchesDataSource.saveSearchedItems(response.results)
-            emit(Result.Success(response.results))
+            val response = networkItemsSearchesDataSource.fetchSearchItems(
+                query,
+                offset,
+                LIMIT_ITEMS_PAGING
+            )
+            localItemsSearchesDataSource.saveSearchedItems(response)
+            emit(Result.Success(response.results.size))
         }.catch {
             emit(Result.Error(it))
         }
     }
 
-    fun getLastSearch(): Flow<List<ItemSearchItems>> {
+    fun getSearchedItems(): Flow<SearchedItemsResource> {
         return localItemsSearchesDataSource
             .getSearchedItems()
-            .map {
-                it ?: listOf()
-            }.catch {
-                emit(listOf())
+            .map { it ?: SearchedItemsResource(0, 0, listOf()) }
+            .catch {
+                emit(SearchedItemsResource(0, 0, listOf()))
             }
     }
 
     fun getItemInCache(itemId: String): Flow<Result<ItemSearchItems>> {
         return localItemsSearchesDataSource
             .getSearchedItems()
-            .map { items ->
-                items?.find{ it.id == itemId }?.let { itemFound ->
+            .map { resource ->
+                resource?.data?.find{ it.id == itemId }?.let { itemFound ->
                     Result.Success(itemFound)
                 } ?: run {
                     val exception = AppException()
@@ -53,5 +56,11 @@ class SearchItemsRepository @Inject constructor(
             }
             .onStart { emit(Result.Loading) }
             .catch { emit(Result.Error(it)) }
+    }
+
+    companion object {
+        const val LIMIT_ITEMS_PAGING = 25
+        const val OFFSET_ITEMS_PAGING = 25
+        const val START_OFFSET_ITEMS_PAGING = 0
     }
 }

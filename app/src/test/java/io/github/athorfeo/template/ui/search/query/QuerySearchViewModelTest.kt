@@ -47,96 +47,110 @@ class QuerySearchViewModelTest {
 
     @Test
     fun init_query_search_state_test() = runTest {
-        val job = launch(UnconfinedTestDispatcher()){ viewModel.uiState.collect() }
+        val jobUiLogicState = launch(UnconfinedTestDispatcher()){ viewModel.uiLogicState.collect() }
+        val jobQuery = launch(UnconfinedTestDispatcher()){ viewModel.query.collect() }
 
-        Assert.assertFalse(viewModel.uiState.value.isLoading)
-        Assert.assertNull(viewModel.uiState.value.exception)
-        Assert.assertEquals("", viewModel.uiState.value.query)
+        Assert.assertFalse(viewModel.uiLogicState.value.isLoading)
+        Assert.assertNull(viewModel.uiLogicState.value.exception)
+        Assert.assertEquals("", viewModel.query.value)
 
-        job.cancel()
+        jobUiLogicState.cancel()
+        jobQuery.cancel()
     }
 
     @Test
     fun on_dismiss_error_test() = runTest {
+        val jobUiLogicState = launch(UnconfinedTestDispatcher()){ viewModel.uiLogicState.collect() }
+        val jobQuery = launch(UnconfinedTestDispatcher()){ viewModel.query.collect() }
+
         val exception = Exception()
-        every { searchItemsRepository.searchItems(any()) } returns flow { emit(Result.Error(exception)) }
-        val job = launch(UnconfinedTestDispatcher()){ viewModel.uiState.collect() }
+        every { searchItemsRepository.searchItems(any(), any()) } returns flow { emit(Result.Error(exception)) }
 
         viewModel.onSearch(mockk())
 
-        Assert.assertFalse(viewModel.uiState.value.isLoading)
-        Assert.assertEquals(exception, viewModel.uiState.value.exception?.cause)
-        Assert.assertEquals("", viewModel.uiState.value.query)
+        Assert.assertFalse(viewModel.uiLogicState.value.isLoading)
+        Assert.assertEquals(exception, viewModel.uiLogicState.value.exception?.cause)
+        Assert.assertEquals("", viewModel.query.value)
 
         viewModel.onDismissError()
 
-        Assert.assertFalse(viewModel.uiState.value.isLoading)
-        Assert.assertNull(viewModel.uiState.value.exception)
-        Assert.assertEquals("", viewModel.uiState.value.query)
+        Assert.assertFalse(viewModel.uiLogicState.value.isLoading)
+        Assert.assertNull(viewModel.uiLogicState.value.exception)
+        Assert.assertEquals("", viewModel.query.value)
 
         verify {
-            searchItemsRepository.searchItems(any())
+            searchItemsRepository.searchItems(any(), any())
         }
 
-        job.cancel()
+        jobUiLogicState.cancel()
+        jobQuery.cancel()
     }
 
     @Test
     fun on_query_change_test() = runTest {
-        val job = launch(UnconfinedTestDispatcher()){ viewModel.uiState.collect() }
+        val jobUiLogicState = launch(UnconfinedTestDispatcher()){ viewModel.uiLogicState.collect() }
+        val jobQuery = launch(UnconfinedTestDispatcher()){ viewModel.query.collect() }
 
         val query = "query"
         viewModel.onQueryChange(query)
 
-        Assert.assertFalse(viewModel.uiState.value.isLoading)
-        Assert.assertNull(viewModel.uiState.value.exception)
-        Assert.assertEquals(query, viewModel.uiState.value.query)
+        Assert.assertFalse(viewModel.uiLogicState.value.isLoading)
+        Assert.assertNull(viewModel.uiLogicState.value.exception)
+        Assert.assertEquals(query, viewModel.query.value)
 
-        job.cancel()
+        jobUiLogicState.cancel()
+        jobQuery.cancel()
     }
 
     @Test
     fun loading_on_search_test() = runTest {
-        every { searchItemsRepository.searchItems(any()) } returns flow { emit(Result.Loading) }
-        val job = launch(UnconfinedTestDispatcher()){ viewModel.uiState.collect() }
+        val jobUiLogicState = launch(UnconfinedTestDispatcher()){ viewModel.uiLogicState.collect() }
+        val jobQuery = launch(UnconfinedTestDispatcher()){ viewModel.query.collect() }
+
+        every { searchItemsRepository.searchItems(any(), any()) } returns flow { emit(Result.Loading) }
 
         viewModel.onSearch(mockk())
 
-        Assert.assertTrue(viewModel.uiState.value.isLoading)
-        Assert.assertNull(viewModel.uiState.value.exception)
-        Assert.assertEquals("", viewModel.uiState.value.query)
+        Assert.assertTrue(viewModel.uiLogicState.value.isLoading)
+        Assert.assertNull(viewModel.uiLogicState.value.exception)
+        Assert.assertEquals("", viewModel.query.value)
 
         verify {
-            searchItemsRepository.searchItems(any())
+            searchItemsRepository.searchItems(any(), any())
         }
 
-        job.cancel()
+        jobUiLogicState.cancel()
+        jobQuery.cancel()
     }
 
     @Test
     fun error_on_search_test() = runTest {
+        val jobUiLogicState = launch(UnconfinedTestDispatcher()){ viewModel.uiLogicState.collect() }
+        val jobQuery = launch(UnconfinedTestDispatcher()){ viewModel.query.collect() }
+
         val exception = Exception()
-        every { searchItemsRepository.searchItems(any()) } returns flow { emit(Result.Error(exception)) }
-        val job = launch(UnconfinedTestDispatcher()){ viewModel.uiState.collect() }
+        every { searchItemsRepository.searchItems(any(), any()) } returns flow { emit(Result.Error(exception)) }
 
         viewModel.onSearch(mockk())
 
-        Assert.assertFalse(viewModel.uiState.value.isLoading)
-        Assert.assertEquals(exception, viewModel.uiState.value.exception?.cause)
-        Assert.assertEquals("", viewModel.uiState.value.query)
+        Assert.assertFalse(viewModel.uiLogicState.value.isLoading)
+        Assert.assertEquals(exception, viewModel.uiLogicState.value.exception?.cause)
+        Assert.assertEquals("", viewModel.query.value)
 
         verify {
-            searchItemsRepository.searchItems(any())
+            searchItemsRepository.searchItems(any(), any())
         }
 
-        job.cancel()
+        jobUiLogicState.cancel()
+        jobQuery.cancel()
     }
 
     @Test
     fun success_on_search_test() = runTest {
-        val list = listOf<ItemSearchItems>(mockk())
-        every { searchItemsRepository.searchItems(any()) } returns flow { emit(Result.Success(list)) }
-        val job = launch(UnconfinedTestDispatcher()){ viewModel.uiState.collect() }
+        val jobUiLogicState = launch(UnconfinedTestDispatcher()){ viewModel.uiLogicState.collect() }
+        val jobQuery = launch(UnconfinedTestDispatcher()){ viewModel.query.collect() }
+
+        every { searchItemsRepository.searchItems(any(), any()) } returns flow { emit(Result.Success(1)) }
 
         val onSuccess: (String) -> Unit = mockk()
         every { onSuccess.invoke(any()) } returns Unit
@@ -144,29 +158,32 @@ class QuerySearchViewModelTest {
         viewModel.onSearch(onSuccess)
 
         verify {
-            searchItemsRepository.searchItems(any())
+            searchItemsRepository.searchItems(any(), any())
             onSuccess.invoke(any())
         }
 
-        job.cancel()
+        jobUiLogicState.cancel()
+        jobQuery.cancel()
     }
 
     @Test
     fun empty_list_success_on_search_test() = runTest {
-        val list = listOf<ItemSearchItems>()
-        every { searchItemsRepository.searchItems(any()) } returns flow { emit(Result.Success(list)) }
-        val job = launch(UnconfinedTestDispatcher()){ viewModel.uiState.collect() }
+        val jobUiLogicState = launch(UnconfinedTestDispatcher()){ viewModel.uiLogicState.collect() }
+        val jobQuery = launch(UnconfinedTestDispatcher()){ viewModel.query.collect() }
+
+        every { searchItemsRepository.searchItems(any(), any()) } returns flow { emit(Result.Success(0)) }
 
         viewModel.onSearch(mockk())
 
-        Assert.assertFalse(viewModel.uiState.value.isLoading)
-        Assert.assertNotNull(viewModel.uiState.value.exception)
-        Assert.assertEquals("", viewModel.uiState.value.query)
+        Assert.assertFalse(viewModel.uiLogicState.value.isLoading)
+        Assert.assertNotNull(viewModel.uiLogicState.value.exception)
+        Assert.assertEquals("", viewModel.query.value)
 
         verify {
-            searchItemsRepository.searchItems(any())
+            searchItemsRepository.searchItems(any(), any())
         }
 
-        job.cancel()
+        jobUiLogicState.cancel()
+        jobQuery.cancel()
     }
 }

@@ -1,7 +1,8 @@
-package io.github.athorfeo.template.data.domain
+package io.github.athorfeo.template.domain
 
+import io.github.athorfeo.template.data.datastore.resource.SearchedItemsResource
 import io.github.athorfeo.template.data.repository.SearchItemsRepository
-import io.github.athorfeo.template.domain.GetLastSearchItemsUseCase
+import io.github.athorfeo.template.domain.GetSearchedItemsUseCase
 import io.github.athorfeo.template.network.response.ItemSearchItems
 import io.github.athorfeo.template.network.response.SalePriceResultSearchItems
 import io.mockk.MockKAnnotations
@@ -18,20 +19,20 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.Before
 
-class GetLastSearchItemsUseCaseTest {
+class GetSearchedItemsUseCaseTest {
     private val dispatcher = StandardTestDispatcher()
     private val scope = TestScope(dispatcher)
 
     @MockK
     private lateinit var searchItemsRepository: SearchItemsRepository
 
-    private lateinit var usecase: GetLastSearchItemsUseCase
+    private lateinit var usecase: GetSearchedItemsUseCase
 
     @Before
     fun before() {
         MockKAnnotations.init(this, relaxUnitFun = true)
 
-        usecase = GetLastSearchItemsUseCase(searchItemsRepository)
+        usecase = GetSearchedItemsUseCase(searchItemsRepository)
     }
 
     @After
@@ -53,13 +54,14 @@ class GetLastSearchItemsUseCaseTest {
                 0
             )
             val list = listOf(item)
-            coEvery { searchItemsRepository.getLastSearch() } returns flow { emit(list) }
+            val resource = SearchedItemsResource(0, 0, list)
+            coEvery { searchItemsRepository.getSearchedItems() } returns flow { emit(resource) }
 
-            usecase.get().collect {
-                Assert.assertEquals(list[0].id, it[0].id)
+            usecase.getPaging().collect {
+                Assert.assertEquals(list[0].id, it.items[0].id)
             }
 
-            coVerify { searchItemsRepository.getLastSearch() }
+            coVerify { searchItemsRepository.getSearchedItems() }
         }
     }
 }

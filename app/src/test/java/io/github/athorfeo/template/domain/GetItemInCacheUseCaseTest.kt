@@ -1,4 +1,4 @@
-package io.github.athorfeo.template.data.domain
+package io.github.athorfeo.template.domain
 
 import io.github.athorfeo.template.data.repository.SearchItemsRepository
 import io.github.athorfeo.template.domain.GetItemInCacheUseCase

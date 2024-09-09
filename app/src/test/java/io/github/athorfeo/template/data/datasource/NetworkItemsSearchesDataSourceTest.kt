@@ -49,17 +49,17 @@ class NetworkItemsSearchesDataSourceTest {
     fun fetch_search_items_test() {
         scope.runTest {
             val response: SearchItemsResponse = mockk()
-            coEvery { api.fetchSearchItems(any()) } returns Response.success(response)
+            coEvery { api.fetchSearchItems(any(), any(), any()) } returns Response.success(response)
             coEvery { networkExecutor.fetch(any<(suspend () -> Response<SearchItemsResponse>)>()) } coAnswers {
                 (arg(0) as (suspend () -> Response<SearchItemsResponse>)).invoke()
                 response
             }
 
-            val fetchResponse = dataSource.fetchSearchItems("")
+            val fetchResponse = dataSource.fetchSearchItems("", 0, 0)
             Assert.assertEquals(response, fetchResponse)
 
             coVerify {
-                api.fetchSearchItems(any())
+                api.fetchSearchItems(any(), any(), any())
                 networkExecutor.fetch(any<(suspend () -> Response<SearchItemsResponse>)>())
             }
         }
@@ -69,13 +69,13 @@ class NetworkItemsSearchesDataSourceTest {
     fun null_fetch_search_items_test() {
         scope.runTest {
             val response: SearchItemsResponse = mockk()
-            coEvery { api.fetchSearchItems(any()) } returns Response.success(response)
+            coEvery { api.fetchSearchItems(any(), any(), any()) } returns Response.success(response)
             coEvery { networkExecutor.fetch(any<(suspend () -> Response<SearchItemsResponse>)>()) } coAnswers {
                 (arg(0) as (suspend () -> Response<SearchItemsResponse>)).invoke()
                 null
             }
 
-            dataSource.fetchSearchItems("")
+            dataSource.fetchSearchItems("", 0, 0)
         }
     }
 }

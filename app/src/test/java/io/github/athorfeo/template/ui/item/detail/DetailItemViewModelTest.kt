@@ -5,7 +5,6 @@ import io.github.athorfeo.template.domain.GetItemInCacheUseCase
 import io.github.athorfeo.template.domain.OpenUrlBrowserUseCase
 import io.github.athorfeo.template.model.Item
 import io.github.athorfeo.template.model.state.ItemState
-import io.github.athorfeo.template.model.state.QuerySearchState
 import io.github.athorfeo.template.navigation.Screen
 import io.github.athorfeo.template.util.AppException
 import io.github.athorfeo.template.util.MainDispatcherRule
